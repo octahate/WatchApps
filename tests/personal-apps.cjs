@@ -22,15 +22,33 @@ const icon = vm.runInNewContext(fs.readFileSync('apps/hello/app-icon.js', 'utf8'
 assert.equal(icon.length, 3 + 48 * 48 / 8);
 assert.deepEqual(Array.from(icon.subarray(0,3)), [48,48,1]);
 let touch;
-let draws = [];
-const g = {theme:{fg:'#fff'}, getWidth:()=>240, getHeight:()=>240};
-for (const key of ['reset','clear','setColor','setFontAlign','setFont','flip']) g[key] = () => g;
-g.drawString = text => {draws.push(text); return g;};
-const context = {g, Bangle:{setUI:(mode,cb)=>{assert.equal(mode,'touch');touch=cb;}}};
-vm.runInNewContext(fs.readFileSync('apps/hello/app.js','utf8'), context);
-assert(draws.includes('Hello World!'));
-touch(); assert(draws.includes('Greetings: 1'));
-touch(); assert(draws.includes('Greetings: 2'));
+for (const theme of [{fg:0,bg:65535},{fg:65535,bg:0}]) {
+  let awake = false;
+  let ink = 65535;
+  let background = 0;
+  let clearedWith;
+  const draws = [];
+  const g = {theme, getWidth:()=>240, getHeight:()=>240};
+  g.reset = () => {ink=65535; background=0; return g;};
+  g.setBgColor = value => {background=value; return g;};
+  g.clear = () => {clearedWith=background; return g;};
+  g.setColor = value => {ink=value; return g;};
+  for (const key of ['setFontAlign','setFont','flip']) g[key] = () => g;
+  g.drawString = text => {
+    assert.notEqual(ink, clearedWith, 'Text must contrast with cleared screen');
+    draws.push(text); return g;
+  };
+  const context = {g, Bangle:{
+    setLCDPower:on=>{awake=on;},
+    setUI:(mode,cb)=>{assert.equal(mode,'touch');touch=cb;}
+  }};
+  vm.runInNewContext(fs.readFileSync('apps/hello/app.js','utf8'), context);
+  assert(awake, 'App must wake the display');
+  assert.equal(clearedWith, theme.bg);
+  assert(draws.includes('Hello World!'));
+  touch(); assert(draws.includes('Greetings: 1'));
+  touch(); assert(draws.includes('Greetings: 2'));
+}
 // Run the real P8 UI helper: leaving through the button uses its established launcher path.
 let button;
 let launches = 0;
