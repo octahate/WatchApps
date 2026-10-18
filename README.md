@@ -7,8 +7,14 @@ The catalog is specific to P8, opens without a watch chooser and contains the P8
 ## Custom changes
 
 - Hello World 0.02: explicit foreground and background colors, screen wake, touch greeting counter and side-button exit.
-- Launcher 0.05: repaints the full screen on every page draw, restores widgets and flushes the display update.
+- Launcher 0.06: repaints the full screen on every page draw, restores widgets and flushes the display update.
 - The site publishes only catalog apps and their referenced files. Original upstream source remains in Git history and the checkout for reference.
+
+## Theme fixes
+
+Main 0.06 applies the saved palette every time apps load and restores it on graphics resets. Settings 0.05 uses the same theme handler. Widget drawing restores colors between widgets; updated battery, alarm and moon widgets work on light backgrounds. Multi Clock 0.09 restores bitmap backgrounds and adapts its Braun dial to the theme.
+
+To apply these fixes to an existing watch, update Main and Setting, then update the installed Launcher, Multi Clock and widgets from My Apps. Reopen the launcher after the updates.
 
 ## Clock synchronization
 

@@ -2,6 +2,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const cp = require('node:child_process');
 const vm = require('node:vm');
+require("./p8-colors.cjs");
 const catalog = JSON.parse(fs.readFileSync('apps.json', 'utf8'));
 const upstream = JSON.parse(cp.execFileSync('git', ['show', 'd8dff30062ebdb14a727d5340129a68471f069eb:apps.json'], {encoding:'utf8'}));
 const removed = ['main-sn80','main-beb79','main-gw32','main-g5','multiclock-sn80','multiclock-g5'];
@@ -12,6 +13,7 @@ for (const app of upstream) {
   const expectedFiles = app.storage.filter(f => !f.supports || f.supports.includes('P8'))
     .filter(f => app.id !== 'main' || !['lcd.js','cst816s.js','cst716.js'].includes(f.name))
     .map(({supports,...file})=>file);
+  if (app.id === "main") expectedFiles.splice(expectedFiles.findIndex(f=>f.name==="main.js")+1,0,{name:"theme.js",url:"theme.js"});
   assert.deepEqual(current.storage, expectedFiles, `P8 install files changed: ${app.id}`);
 }
 for (const app of catalog) {

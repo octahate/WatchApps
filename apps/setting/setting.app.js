@@ -136,13 +136,17 @@ function showClockMenu() {
 function showThemeMenu() {
   function cl(x) { return g.setColor(x).getColor(); }
   function upd(th) {
-    g.theme = th;
+    if (typeof wOS.applyTheme === "function") {
+      th = wOS.applyTheme(th);
+    } else {
+      // Compatibility while Main and Settings are being upgraded separately.
+      g.theme = th;
+      if (!g._p8BaseReset) g._p8BaseReset = g.reset;
+      g.reset = function() { return g._p8BaseReset().setColor(g.theme.fg).setBgColor(g.theme.bg); };
+      g.clear = function(n) { if (n) g.reset(); return g.clearRect(0,0,g.getWidth()-1,g.getHeight()-1); };
+    }
     s.theme = th;
     storage.writeJSON("settings.json",s);
-    delete g.reset;
-    g._reset = g.reset;
-    g.reset = function(n) { return g._reset().setColor(th.fg).setBgColor(th.bg); };
-    g.clear = function(n) { if (n) g.reset(); return g.clearRect(0,0,g.getWidth(),g.getHeight()); };
     g.clear(1);
     m.draw();
   }

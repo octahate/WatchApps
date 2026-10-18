@@ -7,9 +7,10 @@ wOS.drawWidgets = function() {
         br:{x:w-30, y:h-24, r:1, c:0}
     };
     if (global.WIDGETS) {
-      for (var wd of WIDGETS) {
+      for (var id in WIDGETS) {
+        var wd = WIDGETS[id];
         var p = pos[wd.area];
-        if (!p) return;
+        if (!p) continue;
         wd.x = p.x - p.r*wd.width;
         wd.y = p.y;
         p.x += wd.width*(1-2*p.r);
@@ -18,7 +19,12 @@ wOS.drawWidgets = function() {
       g.reset();
       if (pos.tl.c || pos.tr.c) g.clearRect(0,0,w-1,23);
       if (pos.bl.c || pos.br.c) g.clearRect(0,h-24,w-1,h-1);
-      for (wd of WIDGETS) wd.draw(wd);
+      for (id in WIDGETS) {
+        wd = WIDGETS[id];
+        g.reset();
+        wd.draw(wd);
+      }
+      g.reset();
     }
   };
 

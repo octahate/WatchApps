@@ -107,7 +107,7 @@ function watchBat(){
 wOS.init();
 eval(STOR.read(process.env.BOARD=="P8"?"lcd-p8.js":"lcd.js"));
 var g = ST7789();
-g.theme= (wOS.settings.theme)? wOS.settings.theme : {fg:0xffff,bg:0,fg2:0x07ff,bg2:0,fgH:0xFFFF,bgH:0x001F,dark:true};
+eval(STOR.read("theme.js"));
 wOS.bright();
 //console.log("loaded lcd");
 if (process.env.BOARD=="ROCK")

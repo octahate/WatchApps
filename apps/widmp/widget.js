@@ -1,20 +1,19 @@
 /* jshint esversion: 6 */
 (() => {
 
-  var BLACK=g.getBgColor();
-  const MOON = g.toColor(1,1,0), MC = 29.5305882, NM = 694039.09; 
+  var MOON;
   var r = 10, mx = 3, my = 3;
 
   var moon = {
-    0: () => { g.reset().setColor(BLACK).fillRect(mx - r, my - r, mx + r, my + r);},
+    0: () => { g.reset().setColor(g.theme.bg).fillRect(mx - r, my - r, mx + r, my + r);},
     1: () => { moon[0](); g.setColor(MOON).drawCircle(mx, my, r);},
-    2: () => { moon[3](); g.setColor(BLACK).fillEllipse(mx - r / 2, my - r, mx + r / 2, my + r);},
+    2: () => { moon[3](); g.setColor(g.theme.bg).fillEllipse(mx - r / 2, my - r, mx + r / 2, my + r);},
     3: () => { moon[0](); g.setColor(MOON).fillCircle(mx, my, r).clearRect(mx - r, my - r, mx, my + r);},
     4: () => { moon[3](); g.setColor(MOON).fillEllipse(mx - r / 2, my - r, mx + r / 2, my + r);},
     5: () => { moon[0](); g.setColor(MOON).fillCircle(mx, my, r);},
     6: () => { moon[7](); g.setColor(MOON).fillEllipse(mx - r / 2, my - r, mx + r / 2, my + r);},
     7: () => { moon[0](); g.setColor(MOON).fillCircle(mx, my, r).clearRect(mx, my - r, mx + r, my + r);},
-    8: () => { moon[7](); g.setColor(BLACK).fillEllipse(mx - r / 2, my - r, mx + r / 2, my + r);}
+    8: () => { moon[7](); g.setColor(g.theme.bg).fillEllipse(mx - r / 2, my - r, mx + r / 2, my + r);}
   };
 
   function moonPhase(){
@@ -29,6 +28,8 @@
   }
 
   function draw() {
+    g.reset();
+    MOON = g.theme.fg2 !== g.theme.bg ? g.theme.fg2 : g.theme.fg;
     mx = this.x+11; my = this.y + 11;
     moon[moonPhase()]();
   }

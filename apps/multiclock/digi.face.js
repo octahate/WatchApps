@@ -8,7 +8,7 @@ function getFace(){
 
     var buf = Graphics.createArrayBuffer(W,92,1,{msb:true});
     function flip() {
-      g.setColor(g.theme.fg);
+      g.setColor(g.theme.fg).setBgColor(g.theme.bg);
       g.drawImage({width:buf.getWidth(),height:buf.getHeight(),buffer:buf.buffer},0,H/2-34);
     }
     

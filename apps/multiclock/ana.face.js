@@ -68,7 +68,7 @@
     function drawAll() {
         secondDate = minuteDate = new Date();
         // draw seconds
-        g.setColor(1,1,1);
+        g.setColor(g.theme.fg);
         for (let i=0;i<60;i++)
             seconds(360*i/60, 100*scale);
         onSecond();

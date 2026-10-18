@@ -30,8 +30,9 @@ const CELL = 80;
 function draw_icon(p,n,selected) {
     var x = (n%3)*CELL+XOFF; 
     var y = n>2?CELL+YOFF:YOFF;
-    (selected?g.setColor(0.7,0.7,0.7):g.setColor(g.theme.bg)).fillRect(x+8,y,x+72,y+CELL-1);
-    g.setColor(g.theme.fg);
+    g.setBgColor(selected ? g.theme.bgH : g.theme.bg);
+    g.setColor(selected ? g.theme.bgH : g.theme.bg).fillRect(x+8,y,x+72,y+CELL-1);
+    g.setColor(selected ? g.theme.fgH : g.theme.fg);
     try{g.drawImage(apps[p*6+n].icon,x+10,y+4,{scale:1.25});} catch(e){}
     g.setFontAlign(0,-1,0).setFont("6x8",1);
     var txt =  apps[p*6+n].name.split(" ");

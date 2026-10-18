@@ -5,7 +5,8 @@
       var H = g.getHeight();
       var cx = W/2;
       var cy = H/2;
-      var Grey = g.toColor(0.8,0.8,0.8);
+      var greyLevel = g.theme.dark ? 0.8 : 0.35;
+      var Grey = g.toColor(greyLevel,greyLevel,greyLevel);
   
       Graphics.prototype.drawRotRect = function(w, r1, r2, angle) {
           var w2=w/2, h=r2-r1, theta=angle*Math.PI/180;
@@ -21,7 +22,7 @@
         }
         g.clearRect(16,16,W-16,H-16);
         for (let a=0;a<360;a+=30)
-          g.setColor(1,1,1).drawRotRect(2,R-100,170,a);
+          g.setColor(g.theme.fg).drawRotRect(2,R-100,170,a);
         g.clearRect(24,24,W-24,H-24);
         g.flip();
     }
@@ -111,13 +112,13 @@
     function drawDate(){
        g.setColor(1,0,0).fillRect(cx-8,H-69,cx+7,H-66)
        g.setBgColor(-1).setColor(0).drawImage({width:16,height:12,buffer:buf.buffer},cx-8,H-65);
-       g.setBgColor(0).setColor(-1);
+       g.setBgColor(g.theme.bg).setColor(g.theme.fg);
     }  
 
 
     function drawAll(notfirst) {
         if (!notfirst) secondDate = minuteDate = new Date();
-        g.setColor(1,1,1);
+        g.setColor(g.theme.fg);
         //draw bezel
         if (!notfirst) {dial();numdial();}
         initDate(); drawDate();

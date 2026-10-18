@@ -28,11 +28,11 @@
     "tags": "tool,system",
     "type": "bootloader",
     "icon": "bootloader.png",
-    "version": "0.05",
+    "version": "0.06",
     "supports": [
       "P8"
     ],
-    "description": "P8 display, touchscreen, accelerometer and app environment.",
+    "description": "P8 drivers and app environment with consistent colors after app changes and restarts.",
     "storage": [
       {
         "name": "lcd-p8.js",
@@ -41,6 +41,10 @@
       {
         "name": "main.js",
         "url": "main.js"
+      },
+      {
+        "name": "theme.js",
+        "url": "theme.js"
       },
       {
         "name": "accel.js",
@@ -86,7 +90,7 @@
     "name": "Launcher (Default)",
     "shortName": "Launcher",
     "icon": "launch.png",
-    "version": "0.05",
+    "version": "0.06",
     "supports": [
       "P8"
     ],
@@ -126,7 +130,7 @@
   {
     "id": "multiclock",
     "name": "Multi Clock",
-    "version": "0.08",
+    "version": "0.09",
     "description": "P8 clock with multiple faces. Swipe left or right to switch faces; press the side button to open the launcher.",
     "icon": "multiclock.png",
     "type": "clock",
@@ -182,7 +186,7 @@
     "name": "Default Alarm",
     "shortName": "Alarms",
     "icon": "app.png",
-    "version": "0.101",
+    "version": "0.102",
     "description": "Set and respond to alarms",
     "tags": "tool,alarm,widget",
     "storage": [
@@ -221,7 +225,7 @@
     "id": "widbat",
     "name": "Battery Level Widget",
     "icon": "widget.png",
-    "version": "0.06",
+    "version": "0.07",
     "description": "Show the current battery level and charging status in the top right of the clock",
     "tags": "widget,battery",
     "type": "widget",
@@ -263,7 +267,7 @@
     "id": "setting",
     "name": "Setting",
     "icon": "setting.png",
-    "version": "0.04",
+    "version": "0.05",
     "description": "A menu for adjusting device settings",
     "tags": "tool,system",
     "storage": [
@@ -290,7 +294,7 @@
     "id": "widmp",
     "name": "Moon Phase Widget",
     "icon": "widget.png",
-    "version": "0.04",
+    "version": "0.05",
     "description": "Display the current moon phase in blueish for the northern hemisphere in eight phases",
     "tags": "widget,tools",
     "type": "widget",
