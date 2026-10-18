@@ -7,16 +7,18 @@ function watch(renderMs=8) {
   let now=0, next=1, touch, kill, power, writes=0, saved='', frames=0;
   const timers=new Map(), text=[], rexY=[], transfers=[];
   const chain={};
-  for (const k of ['reset','setColor','setBgColor','setFont','setFontAlign','clear','clearRect']) chain[k]=function(){return this;};
+  for (const k of ['setClipRect','reset','setColor','setBgColor','setFont','setFontAlign','clear','clearRect']) chain[k]=function(){return this;};
   const screen=Object.assign({},chain,{
-    getWidth:()=>240,getHeight:()=>240,
+    getWidth:()=>240,getHeight:()=>240,drawLine(){return this;},
     drawImage(im,x,y){
       frames++;transfers.push(im.width*im.height);
+      if (im.buffer) {
       const patch=new Uint8Array(im.buffer), original=new Uint8Array(buffer.buffer);
       for(let row=0;row<im.height;row++)for(let col=0;col<im.width;col++) {
         const bit=(patch[row*im.width/8+(col>>3)]>>(7-(col&7)))&1;
         const sx=x/2+col, sy=(y-56)/2+row;
         assert.equal(bit,(original[sy*15+(sx>>3)]>>(7-(sx&7)))&1,'patch pixels must match the composed frame');
+      }
       }
       now+=renderMs/1000;return this;
     },

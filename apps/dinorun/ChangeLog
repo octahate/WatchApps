@@ -1,2 +1,3 @@
+0.03: Replace JavaScript patch copying with direct native sprite rendering; add display/logic timings.
 0.02: Transfer changed sprite regions only; static ground; fixed-step physics independent of display FPS.
 0.01: Initial P8 touch port of BangleApps T-Rex with measured FPS and persistent best score.

@@ -21,7 +21,7 @@
   var top = (screen.getHeight() - 128) / 2;
   var interval = 50;
   var lastStep = 0, forceFull = true, previousRects = [];
-  var pixels = new Uint8Array(g.buffer);
+  var drawMs=0, logicMs=0;
   var timer, saveTimer;
   var paused = false, closed = false;
   var jumpQueued = false;
@@ -151,9 +151,10 @@ IMG.rex.forEach(i=>i.transparent=0);
 IMG.cacti.forEach(i=>i.transparent=0);
   function drawFPS() {
     screen.setBgColor(65535).setColor(0);
-    screen.clearRect(0,0,85,17);
+    screen.clearRect(0,0,159,24);
     screen.setFont("6x8",1).setFontAlign(-1,-1);
     screen.drawString("FPS " + fpsText,4,5);
+    screen.drawString("D:"+drawMs+" L:"+logicMs+" ms",4,16);
     if (screen.flip) screen.flip();
   }
   function resetFPS() {
@@ -179,37 +180,36 @@ IMG.cacti.forEach(i=>i.transparent=0);
     }
     return rects;
   }
-  function drawPatch(r) {
-    var x1=Math.max(0,Math.floor(r[0]/8)), x2=Math.min(14,Math.floor(r[2]/8));
-    var y1=Math.max(0,r[1]), y2=Math.min(63,r[3]);
-    if (x2<x1 || y2<y1) return;
-    var stride=x2-x1+1, bytes=new Uint8Array(stride*(y2-y1+1)), n=0;
-    for (var y=y1;y<=y2;y++) for (var x=x1;x<=x2;x++) bytes[n++]=pixels[y*15+x];
-    screen.drawImage({width:stride*8,height:y2-y1+1,bpp:1,buffer:bytes.buffer},x1*16,top+y1*2,{scale:2});
-  }
   function present(countFrame) {
+    var drawStarted=getTime();
     screen.reset().setBgColor(65535).setColor(0);
     if (forceFull || !rex || !rex.alive) {
       screen.drawImage(image,0,top,{scale:2});
       forceFull = false;
     } else {
-      // Transfer only sprite regions and the score, never the whole playfield.
-      var rects = previousRects.concat(spriteRects());
-      rects.push([80,0,119,14]);
-      for (var i=0;i<rects.length;i++) {
-        var r=rects[i];
-        for (var j=i+1;j<rects.length;j++) {
-          var b=rects[j];
-          if (r[0]<=b[2]+8 && b[0]<=r[2]+8 && r[1]<=b[3]+2 && b[1]<=r[3]+2) {
-            r=[Math.min(r[0],b[0]),Math.min(r[1],b[1]),Math.max(r[2],b[2]),Math.max(r[3],b[3])];
-            rects[i]=r; rects.splice(j,1); j=i;
-          }
-        }
-        drawPatch(r);
+      screen.setClipRect(0,top,239,top+127);
+      // Use native clear/draw operations: no JS pixel packing or patch allocation.
+      for (var i=0;i<previousRects.length;i++) {
+        var r=previousRects[i];
+        screen.clearRect(Math.max(0,r[0]*2),top+Math.max(0,r[1])*2,
+          Math.min(239,r[2]*2+1),top+Math.min(63,r[3])*2+1);
       }
+      screen.drawLine(0,top+120,239,top+120);
+      screen.drawLine(0,top+121,239,top+121);
+      for (var j=0;j<cacti.length;j++) {
+        var c=cacti[j], im=IMG.cacti[c.img];
+        if (c.x<120) screen.drawImage(im,Math.floor(c.x)*2,top+(60-im.height)*2,{scale:2});
+      }
+      screen.drawImage(IMG.rex[rex.img],rex.x*2,top+Math.floor(38-rex.y)*2,{scale:2});
+      screen.clearRect(160,top,239,top+29);
+      screen.setFont("6x8",1).setFontAlign(1,-1);
+      screen.drawString("HI "+displayedHighScore,239,top);
+      screen.drawString(""+rex.score,239,top+16);
+      screen.setClipRect(0,0,239,239);
     }
     previousRects = rex ? spriteRects() : [];
     if (screen.flip) screen.flip();
+    drawMs=Math.round((getTime()-drawStarted)*1000);
     if (!countFrame) return;
     fpsFrames++;
     var elapsed = getTime() - fpsStart;
@@ -259,6 +259,7 @@ IMG.cacti.forEach(i=>i.transparent=0);
   }
   function onFrame(render) {
     "ram"
+    var logicStarted=getTime();
     g.clear();
     if (rex.alive) {
       frame++; rex.score++;
@@ -305,12 +306,14 @@ IMG.cacti.forEach(i=>i.transparent=0);
       msg=rex.score>displayedHighScore?"NEW RECORD":"Tap to retry";
       g.drawString(msg,(W-g.stringWidth(msg))/2,25);
     }
+    logicMs+=Math.round((getTime()-logicStarted)*1000);
     if (render !== false || !rex.alive) present(true);
   }
   function loop() {
     timer = undefined;
     if (closed || paused || !rex || !rex.alive) return;
     var started = getTime();
+    logicMs=0;
     var steps=Math.min(5,Math.max(1,Math.floor((started-lastStep)*1000/interval)));
     lastStep+=steps*interval/1000;
     for (var n=0;n<steps && rex.alive;n++) onFrame(n===steps-1);
