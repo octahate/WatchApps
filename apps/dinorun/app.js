@@ -30,8 +30,8 @@
   var scoreDirty = false, crashedAt = 0;
   var fpsStart = 0, fpsFrames = 0, fpsText = "--";
 
-var IMG = {
-  rex: [Graphics.createImage(`
+var RAW_SPRITES = {
+  rex: [`
            ########
           ##########
           ## #######
@@ -54,7 +54,7 @@ var IMG = {
      ##   #
           #
           ##
-`),Graphics.createImage(`
+`,`
            ########
           ##########
           ## #######
@@ -77,7 +77,7 @@ var IMG = {
      ##   ##
      #
      ##
-`),Graphics.createImage(`
+`,`
            ########
           #   ######
           # # ######
@@ -100,8 +100,8 @@ var IMG = {
      ##   #
      #    #
      ##   ##
-`)],
-  cacti: [Graphics.createImage(`
+`],
+  cacti: [`
      ##
     ####
     ####
@@ -126,7 +126,7 @@ var IMG = {
     ####
     ####
     ####
-`),Graphics.createImage(`
+`,`
    ##
    ##
  # ##
@@ -145,10 +145,36 @@ var IMG = {
    ##
    ##
    ##
-`)],
+`],
 };
-IMG.rex.forEach(i=>i.transparent=0);
-IMG.cacti.forEach(i=>i.transparent=0);
+
+function scaleSprite(str, factor) {
+  if (factor === 1) return Graphics.createImage(str);
+  var lines = str.replace(/^\n/,"").replace(/\n$/,"").split("\n");
+  var out = [];
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i], scaled = "";
+    for (var j = 0; j < line.length; j++) {
+      for (var f = 0; f < factor; f++) scaled += line[j];
+    }
+    for (var f2 = 0; f2 < factor; f2++) out.push(scaled);
+  }
+  return Graphics.createImage("\n" + out.join("\n") + "\n");
+}
+
+var IMG = {
+  rex: RAW_SPRITES.rex.map(function(s) { return scaleSprite(s, 1); }),
+  cacti: RAW_SPRITES.cacti.map(function(s) { return scaleSprite(s, 1); }),
+};
+// Native 2x sprites for unscaled SPI burst transfers (eliminates per-pixel setPixel SPI overhead).
+var IMG2X = {
+  rex: RAW_SPRITES.rex.map(function(s) { return scaleSprite(s, 2); }),
+  cacti: RAW_SPRITES.cacti.map(function(s) { return scaleSprite(s, 2); }),
+};
+
+IMG.rex.forEach(function(i) { i.transparent = 0; });
+IMG.cacti.forEach(function(i) { i.transparent = 0; });
+// IMG2X deliberately has no transparent flag so lcd_spi_unbuf streams whole blocks over SPI.
   function drawFPS() {
     screen.setBgColor(65535).setColor(0);
     screen.clearRect(0,0,159,24);
@@ -197,10 +223,10 @@ IMG.cacti.forEach(i=>i.transparent=0);
       screen.drawLine(0,top+120,239,top+120);
       screen.drawLine(0,top+121,239,top+121);
       for (var j=0;j<cacti.length;j++) {
-        var c=cacti[j], im=IMG.cacti[c.img];
-        if (c.x<120) screen.drawImage(im,Math.floor(c.x)*2,top+(60-im.height)*2,{scale:2});
+        var c=cacti[j], im=IMG2X.cacti[c.img];
+        if (c.x<120) screen.drawImage(im,Math.floor(c.x)*2,top+120-im.height);
       }
-      screen.drawImage(IMG.rex[rex.img],rex.x*2,top+Math.floor(38-rex.y)*2,{scale:2});
+      screen.drawImage(IMG2X.rex[rex.img],rex.x*2,top+Math.floor(38-rex.y)*2);
       screen.clearRect(160,top,239,top+29);
       screen.setFont("6x8",1).setFontAlign(1,-1);
       screen.drawString("HI "+displayedHighScore,239,top);
@@ -277,7 +303,6 @@ IMG.cacti.forEach(i=>i.transparent=0);
       }
       for (var i=0;i<cacti.length;i++) cacti[i].x--;
       while (cacti.length && cacti[0].x<0) cacti.shift();
-      Bangle.setLCDPower(true);
     }
     g.drawLine(0,60,W-1,60);
     for (var j=0;j<cacti.length;j++) {
@@ -314,8 +339,8 @@ IMG.cacti.forEach(i=>i.transparent=0);
     if (closed || paused || !rex || !rex.alive) return;
     var started = getTime();
     logicMs=0;
-    var steps=Math.min(5,Math.max(1,Math.floor((started-lastStep)*1000/interval)));
-    lastStep+=steps*interval/1000;
+    var steps=Math.min(2,Math.max(1,Math.floor((started-lastStep)*1000/interval)));
+    lastStep=started;
     for (var n=0;n<steps && rex.alive;n++) onFrame(n===steps-1);
     if (rex.alive && !paused && !closed) {
       timer = setTimeout(loop,Math.max(1,interval-(getTime()-started)*1000));
