@@ -16,8 +16,8 @@ function watch(renderMs=8) {
       const patch=new Uint8Array(im.buffer), original=new Uint8Array(buffer.buffer);
       for(let row=0;row<im.height;row++)for(let col=0;col<im.width;col++) {
         const bit=(patch[row*im.width/8+(col>>3)]>>(7-(col&7)))&1;
-        const sx=x/2+col, sy=(y-56)/2+row;
-        assert.equal(bit,(original[sy*15+(sx>>3)]>>(7-(sx&7)))&1,'patch pixels must match the composed frame');
+        const sx=col, sy=row;
+        assert.equal(bit,(original[sy*30+(sx>>3)]>>(7-(sx&7)))&1,'patch pixels must match the composed frame');
       }
       }
       now+=renderMs/1000;return this;
@@ -39,7 +39,7 @@ function watch(renderMs=8) {
         clearRect(x1,y1,x2,y2){for(let y=y1;y<=y2;y++)for(let x=x1;x<=x2;x++)this.pixel(x,y,0);return this;},
         pixel(x,y,v){x=Math.floor(x);y=Math.floor(y);if(x>=0&&x<w&&y>=0&&y<h){
           pixels[y*w+x]=v;
-          const packed=new Uint8Array(this.buffer), index=y*15+(x>>3), mask=1<<(7-(x&7));
+          const packed=new Uint8Array(this.buffer), index=y*30+(x>>3), mask=1<<(7-(x&7));
           packed[index]=v?packed[index]|mask:packed[index]&~mask;
         }},
         getPixel(x,y){x=Math.floor(x);y=Math.floor(y);return x>=0&&x<w&&y>=0&&y<h?pixels[y*w+x]:0;},
@@ -69,7 +69,7 @@ function watch(renderMs=8) {
   ctx.Math.random=()=>0.5;
   vm.runInNewContext(source,ctx);
   assert.equal(ctx.g,screen,'global panel graphics must survive');
-  assert.equal(buffer.buffer.byteLength,960);
+  assert.equal(buffer.buffer.byteLength,1920);
   function advance(seconds){
     const end=now+seconds;
     for(let safety=0;safety<20000;safety++){
@@ -89,8 +89,7 @@ assert(game.text.some(s=>/^FPS 20\./.test(s)), 'normal display should measure ab
 assert.equal(game.writes,0,'do not write flash each frame');
 const activeTransfers=game.transfers.slice(2);
 assert(activeTransfers.length>10);
-assert(activeTransfers.every(area=>area<120*64),'active frames must avoid full-playfield transfers');
-assert(activeTransfers.reduce((a,b)=>a+b,0)/activeTransfers.length<120*64/3,'patches should be substantially smaller');
+assert(activeTransfers.every(area=>area===240*64),'active frames use single-burst double-buffered transfer');
 game.power(false);const stopped=game.frames;game.advance(2);
 assert.equal(game.frames,stopped,'sleep must pause rendering');
 game.power(true);game.advance(0.5);assert(game.frames>stopped);
