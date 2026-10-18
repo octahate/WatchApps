@@ -24,9 +24,11 @@ for (const app of catalog) {
     if (file.url) assert(fs.existsSync(`apps/${app.id}/${file.url}`), `Missing file: ${file.url}`);
   }
 }
-const loaderContext = {Puck:{},Const:{},DEVICEINFO:[],document:{getElementById:()=>({})},appJSON:[...catalog,{id:'other',supports:['G5']}]};
+const loaderContext = {httpGet:url=>url,Puck:{},Const:{},DEVICEINFO:[],document:{getElementById:()=>({})},appJSON:[...catalog,{id:'other',supports:['G5']}]};
 vm.createContext(loaderContext);
 vm.runInContext(fs.readFileSync('loader.js','utf8'),loaderContext);
+assert.match(loaderContext.httpGet('apps.json'), /^apps.json\?v=/);
+assert.equal(loaderContext.httpGet('apps/hello/app.js'),'apps/hello/app.js');
 loaderContext.onAppJSONLoaded();
 assert.equal(loaderContext.appJSON.length,catalog.length);
 assert.equal(loaderContext.DEVICEINFO.length,1);

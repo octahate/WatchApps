@@ -1,5 +1,10 @@
 /* P8-only configuration for the shared Espruino App Loader. */
 Puck.debug = 3;
+// Keep the page, device configuration and catalog on the same published revision.
+var p8HttpGet = httpGet;
+httpGet = function (url) {
+  return p8HttpGet(url === "apps.json" ? "apps.json?v=__P8_BUILD__" : url);
+};
 Const.SINGLE_APP_ONLY = false;
 Const.HAS_E_SHOWMESSAGE = true;
 Const.MESSAGE_RELOAD = "Hold the side button to open the launcher";

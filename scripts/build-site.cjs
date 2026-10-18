@@ -1,6 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const catalog = JSON.parse(fs.readFileSync('apps.json', 'utf8'));
+const revision = require('node:crypto').createHash('sha256').update(fs.readFileSync('apps.json')).update(fs.readFileSync('loader.js')).update(fs.readFileSync('index.html')).digest('hex').slice(0,12);
 const out = '_site';
 fs.rmSync(out, {recursive:true, force:true});
 fs.mkdirSync(out);
@@ -25,6 +26,10 @@ for (const app of catalog) {
     fs.mkdirSync(path.dirname(dest), {recursive:true});
     fs.copyFileSync(path.join(dir,file),dest);
   }
+}
+for (const name of ['index.html','loader.js']) {
+  const dest = path.join(out,name);
+  fs.writeFileSync(dest, fs.readFileSync(dest,'utf8').replaceAll('__P8_BUILD__', revision));
 }
 fs.writeFileSync(path.join(out,'.nojekyll'),'');
 console.log(`Built P8-only store with ${catalog.length} apps.`);
