@@ -140,9 +140,9 @@
     "name": "Launcher (Default)",
     "shortName":"Launcher",
     "icon": "launch.png",
-    "version":"0.03",
+    "version":"0.04",
     "supports": ["ROCK","P8","Magic3","BEBINCA79","SN80","G5"],
-    "description": "Added display of widgets.",
+    "description": "App launcher with widgets. Clears leftover startup text before drawing.",
     "tags": "tool,system,launcher",
     "type":"launch",
     "storage": [
@@ -405,6 +405,29 @@
     "storage": [
       {"name":"widstep.wid.js","url":"widstep.wid.js"}
     ]
+  },
+  {
+    "id": "hello",
+    "name": "Hello World",
+    "shortName": "Hello",
+    "version": "0.01",
+    "description": "Your first custom P8 app. Tap to count greetings; press the side button to return to the launcher.",
+    "icon": "hello.png",
+    "type": "app",
+    "tags": "tool",
+    "supports": [
+      "P8"
+    ],
+    "storage": [
+      {
+        "name": "hello.app.js",
+        "url": "app.js"
+      },
+      {
+        "name": "hello.img",
+        "url": "app-icon.js",
+        "evaluate": true
+      }
+    ]
   }
-
- ]
+]

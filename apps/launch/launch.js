@@ -116,6 +116,9 @@ global.SCREENACCESS = {
     }
   }; 
 
+// Clear startup text before drawing the status widgets and app grid.
+g.reset();
+g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 drawPage(0);

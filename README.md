@@ -1,3 +1,22 @@
+# Gellért’s P8 App Store
+
+Personal fork of [jeffmer/WatchApps](https://github.com/jeffmer/WatchApps). All original applications and device drivers are retained.
+
+## Personal additions
+
+- **Hello World**: tap to increase the greeting count; press the side button to return to the launcher.
+- **Launcher 0.04**: clears startup text before drawing widgets and icons on P8, ROCK and Magic3.
+
+On your already configured P8, install or update **Launcher (Default)** and install **Hello World**. Keep the regular **Main** environment.
+
+## Publishing and development
+
+GitHub Pages should use **GitHub Actions** as its source. The Publish app store workflow checks out the pinned loader-core submodule, verifies the changes and publishes the static site on every push to `master`.
+
+Clone with `git clone --recurse-submodules https://github.com/octahate/WatchApps.git`. Run `node tests/personal-apps.cjs` to validate the custom app and launcher. New apps live under `apps/<id>/` and have an entry in `apps.json`.
+
+## Upstream documentation
+
 Espruino App Loader (and Apps) for  P8, ROCK, Magic 3 Smart Watches
 ==============================
 
