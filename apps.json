@@ -86,11 +86,11 @@
     "name": "Launcher (Default)",
     "shortName": "Launcher",
     "icon": "launch.png",
-    "version": "0.04",
+    "version": "0.05",
     "supports": [
       "P8"
     ],
-    "description": "App launcher with widgets. Clears leftover startup text before drawing.",
+    "description": "P8 launcher with a full-screen redraw that clears startup text and restores status widgets.",
     "tags": "tool,system,launcher",
     "type": "launch",
     "storage": [

@@ -7,8 +7,12 @@ The catalog is specific to P8, opens without a watch chooser and contains the P8
 ## Custom changes
 
 - Hello World 0.02: explicit foreground and background colors, screen wake, touch greeting counter and side-button exit.
-- Launcher 0.04: clears startup text before drawing widgets and icons.
+- Launcher 0.05: repaints the full screen on every page draw, restores widgets and flushes the display update.
 - The site publishes only catalog apps and their referenced files. Original upstream source remains in Git history and the checkout for reference.
+
+## Clock synchronization
+
+Connect the P8, open About and click Set Time. Enable Set watch time automatically when connecting to sync on future connections. Time zone is copied from the browser device and saved in the P8 settings.json file.
 
 ## Development
 

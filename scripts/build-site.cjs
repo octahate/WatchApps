@@ -1,11 +1,11 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const catalog = JSON.parse(fs.readFileSync('apps.json', 'utf8'));
-const revision = require('node:crypto').createHash('sha256').update(fs.readFileSync('apps.json')).update(fs.readFileSync('loader.js')).update(fs.readFileSync('index.html')).digest('hex').slice(0,12);
+const revision = require('node:crypto').createHash('sha256').update(fs.readFileSync('apps.json')).update(fs.readFileSync('loader.js')).update(fs.readFileSync('index.html')).update(fs.readFileSync('p8-time.js')).digest('hex').slice(0,12);
 const out = '_site';
 fs.rmSync(out, {recursive:true, force:true});
 fs.mkdirSync(out);
-for (const name of ['index.html','loader.js','apps.json','site.webmanifest','browserconfig.xml','css','core']) {
+for (const name of ['index.html','loader.js','p8-time.js','apps.json','site.webmanifest','browserconfig.xml','css','core']) {
   fs.cpSync(name, path.join(out,name), {recursive:true});
 }
 fs.rmSync(path.join(out,'core','.git'), {force:true,recursive:true});

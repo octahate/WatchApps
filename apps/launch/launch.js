@@ -43,7 +43,10 @@ function draw_icon(p,n,selected) {
 
 function drawPage(p){
     g.reset();
-    g.clearRect(0,24,w-1,h-1);
+    g.setBgColor(g.theme.bg);
+    g.setColor(g.theme.bg);
+    // Paint the whole panel, including the startup-text and widget area.
+    g.fillRect(0,0,w-1,h-1);
     var O = w/2-12*(Npages/2);
     for (var j=0;j<Npages;j++){
         var x = O+j*12;
@@ -52,9 +55,11 @@ function drawPage(p){
         else g.drawCircle(x,h-30,4);
     }
     for (var i=0;i<6;i++) {
-        if (!apps[p*6+i]) return i;
+        if (!apps[p*6+i]) break;
         draw_icon(p,i,selected==i);
     }
+    Bangle.drawWidgets();
+    if (g.flip) g.flip();
 }
 
 function swipeAction(dir){
@@ -116,11 +121,8 @@ global.SCREENACCESS = {
     }
   }; 
 
-// Clear startup text before drawing the status widgets and app grid.
-g.reset();
-g.clear();
 Bangle.loadWidgets();
-Bangle.drawWidgets();
+Bangle.setLCDPower(true);
 drawPage(0);
 setControls();
 

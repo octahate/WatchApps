@@ -28,7 +28,8 @@ const loaderContext = {httpGet:url=>url,Puck:{},Const:{},DEVICEINFO:[],document:
 vm.createContext(loaderContext);
 vm.runInContext(fs.readFileSync('loader.js','utf8'),loaderContext);
 assert.match(loaderContext.httpGet('apps.json'), /^apps.json\?v=/);
-assert.equal(loaderContext.httpGet('apps/hello/app.js'),'apps/hello/app.js');
+assert(loaderContext.httpGet('apps/hello/app.js').startsWith('apps/hello/app.js?v='));
+assert.equal(loaderContext.httpGet('core/js/index.js'),'core/js/index.js');
 loaderContext.onAppJSONLoaded();
 assert.equal(loaderContext.appJSON.length,catalog.length);
 assert.equal(loaderContext.DEVICEINFO.length,1);
@@ -77,15 +78,58 @@ const TC = {on:()=>{},removeListener:()=>{}};
 const wOS = {awake:true,showLauncher:()=>launches++};
 vm.runInNewContext(fs.readFileSync('apps/main/setui.js','utf8'), {wOS,TC, BTN1:1,setWatch:cb=>{button=cb;return 1;},clearWatch:()=>{},setTimeout:cb=>cb()});
 wOS.setUI('touch',touch); button(); assert.equal(launches,1);
-// Verify launcher clears startup text before widgets, including when none are installed.
-const events = [];
-const lg = {theme:{fg:'#fff',bg:'#000'},getWidth:()=>240,getHeight:()=>240};
-for (const key of ['reset','clear','clearRect','setColor','fillCircle','drawCircle']) lg[key]=()=>{events.push(key);return lg;};
-const Bangle = {loadWidgets:()=>events.push('loadWidgets'),drawWidgets:()=>events.push('drawWidgets'),setUI:()=>{}};
-vm.runInNewContext(fs.readFileSync('apps/launch/launch.js','utf8'), {g:lg,require:()=>({list:()=>[]}), Bangle,TC:{on:()=>{}},global:{}});
-assert(events.indexOf('clear') < events.indexOf('loadWidgets'));
-assert(events.indexOf('loadWidgets') < events.indexOf('drawWidgets'));
-assert(events.indexOf('drawWidgets') < events.indexOf('clearRect'));
+// Verify every launcher redraw clears all pixels before restoring widgets and flushing.
+for (const theme of [{fg:0,bg:65535},{fg:65535,bg:0}]) {
+  for (const count of [0,7]) {
+    const events = [];
+    let ink;
+    const lg = {theme,getWidth:()=>240,getHeight:()=>240};
+    lg.reset=()=>{ink=65535;events.push(['reset']);return lg;};
+    lg.setColor=v=>{ink=v;return lg;};
+    lg.setBgColor=v=>{events.push(['background',v]);return lg;};
+    lg.fillRect=(...rect)=>{events.push(['paint',ink,...rect]);return lg;};
+    lg.flip=()=>{events.push(['flip']);};
+    for (const key of ['fillCircle','drawCircle','setFontAlign','setFont','drawString','drawImage']) lg[key]=()=>lg;
+    const Bangle = {loadWidgets:()=>events.push(['loadWidgets']),drawWidgets:()=>events.push(['widgets']),setLCDPower:on=>assert.equal(on,true),setUI:()=>{}};
+    const ctx={g:lg,require:()=>({list:()=>Array.from({length:count},(_,i)=>i+'.info'),readJSON:name=>({name:'App '+name,src:name+'.js'})}),Bangle,TC:{on:()=>{}},global:{}};
+    vm.createContext(ctx);
+    vm.runInContext(fs.readFileSync('apps/launch/launch.js','utf8'),ctx);
+    function verify() {
+      const full=events.findIndex(e=>e[0]==='paint'&&e.slice(2).join(',')==='0,0,239,239');
+      const widgets=events.findIndex(e=>e[0]==='widgets');
+      const flip=events.findIndex(e=>e[0]==='flip');
+      assert(full>=0,'Entire screen must be painted');
+      assert.equal(events[full][1],theme.bg);
+      assert(full<widgets&&widgets<flip,'Restore widgets after clearing, then flush');
+    }
+    verify();
+    events.length=0;ctx.drawPage(count?1:0);verify();
+    events.length=0;ctx.global.SCREENACCESS.release();verify();
+  }
+}
 assert(fs.existsSync('core/js/index.js'));
 assert(fs.existsSync('core/lib/espruinotools.js'));
-console.log(`Passed: ${catalog.length} P8/shared apps selected; non-P8 packages excluded; Hello World drawing, touch, icon, side-button exit; launcher clear order; loader core present.`);
+async function testClockSync() {
+  for (const timezone of [0,2,-5.5]) {
+    const sent=[];
+    let stored;
+    let timestamp;
+    let appliedZone;
+    const now=1792355000000;
+    const Comms={write:command=>{sent.push(command);return Promise.resolve('written');}};
+    class Clock extends Date {constructor(){super(now);}getTimezoneOffset(){return -timezone*60;}}
+    vm.runInNewContext(fs.readFileSync('p8-time.js','utf8'),{Comms,Date:Clock});
+    assert.equal(await Comms.setTime(),'written');
+    assert.equal(sent[0],'\x03');
+    assert.equal(sent.length,2);
+    const runtime={setTime:value=>timestamp=value,E:{setTimeZone:value=>appliedZone=value},wOS:{settings:{timezone:9}},require:name=>{assert.equal(name,'Storage');return {readJSON:(file)=>{assert.equal(file,'settings.json');return {timezone:9,bright:0.3};},writeJSON:(file,value)=>{assert.equal(file,'settings.json');stored=value;}};}};
+    vm.runInNewContext(sent[1].slice(1),runtime);
+    assert.equal(timestamp,now/1000);assert.equal(appliedZone,timezone);
+    assert.equal(stored.timezone,timezone);assert.equal(stored.bright,0.3);
+    assert.equal(runtime.wOS.settings.timezone,timezone);
+  }
+  const Comms={write:()=>Promise.reject(new Error('Disconnected'))};
+  vm.runInNewContext(fs.readFileSync('p8-time.js','utf8'),{Comms,Date});
+  await assert.rejects(Comms.setTime(),/Disconnected/);
+}
+testClockSync().then(()=>console.log(`Passed: ${catalog.length} P8 apps; Hello World; full-screen launcher redraws with widget restore and flush; clock sync and persisted time zones.`)).catch(error=>{console.error(error);process.exitCode=1;});
