@@ -4,7 +4,7 @@ Tap to start, then tap to jump over cacti. After a crash, wait briefly and tap t
 
 The upper-left FPS counter measures completed game display updates each second. The game targets 20 FPS; the measured rate depends on your watch. It shows `--` until the first measurement.
 
-The screen stays awake during play. Display sleep pauses the game; waking resumes it. Your best score is saved after a crash and when leaving the app. Scores count survived frames, as in the original game.
+The screen stays awake during play. Display sleep pauses the game; waking resumes it. Your best score is saved after a crash and when leaving the app. Scores count survived physics steps at 20 steps per second. Version 0.02 transfers only changed sprite areas and the score during play, with static ground to reduce display traffic. Physics catches up in fixed steps when rendering is slower, up to five steps per display update.
 
 ## Source and license
 

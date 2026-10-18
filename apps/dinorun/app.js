@@ -20,6 +20,8 @@
   var image = {width:120, height:64, bpp:1, buffer:g.buffer};
   var top = (screen.getHeight() - 128) / 2;
   var interval = 50;
+  var lastStep = 0, forceFull = true, previousRects = [];
+  var pixels = new Uint8Array(g.buffer);
   var timer, saveTimer;
   var paused = false, closed = false;
   var jumpQueued = false;
@@ -159,6 +161,7 @@ IMG.cacti.forEach(i=>i.transparent=0);
     drawFPS();
   }
   function paintChrome() {
+    forceFull = true;
     screen.reset().setBgColor(65535).setColor(0).clear();
     screen.setFont("6x8",2).setFontAlign(0,-1);
     screen.drawString("DINO RUNNER",screen.getWidth()/2,27);
@@ -167,9 +170,45 @@ IMG.cacti.forEach(i=>i.transparent=0);
     screen.drawString("Side button: exit",screen.getWidth()/2,217);
     drawFPS();
   }
+  function spriteRects() {
+    var y=Math.floor(38-rex.y);
+    var rects=[[8,y,31,y+22]];
+    for (var i=0;i<cacti.length;i++) {
+      var c=cacti[i], im=IMG.cacti[c.img];
+      if (c.x<120) rects.push([Math.floor(c.x)-1,60-im.height,Math.floor(c.x)+im.width,60]);
+    }
+    return rects;
+  }
+  function drawPatch(r) {
+    var x1=Math.max(0,Math.floor(r[0]/8)), x2=Math.min(14,Math.floor(r[2]/8));
+    var y1=Math.max(0,r[1]), y2=Math.min(63,r[3]);
+    if (x2<x1 || y2<y1) return;
+    var stride=x2-x1+1, bytes=new Uint8Array(stride*(y2-y1+1)), n=0;
+    for (var y=y1;y<=y2;y++) for (var x=x1;x<=x2;x++) bytes[n++]=pixels[y*15+x];
+    screen.drawImage({width:stride*8,height:y2-y1+1,bpp:1,buffer:bytes.buffer},x1*16,top+y1*2,{scale:2});
+  }
   function present(countFrame) {
     screen.reset().setBgColor(65535).setColor(0);
-    screen.drawImage(image,0,top,{scale:2});
+    if (forceFull || !rex || !rex.alive) {
+      screen.drawImage(image,0,top,{scale:2});
+      forceFull = false;
+    } else {
+      // Transfer only sprite regions and the score, never the whole playfield.
+      var rects = previousRects.concat(spriteRects());
+      rects.push([80,0,119,14]);
+      for (var i=0;i<rects.length;i++) {
+        var r=rects[i];
+        for (var j=i+1;j<rects.length;j++) {
+          var b=rects[j];
+          if (r[0]<=b[2]+8 && b[0]<=r[2]+8 && r[1]<=b[3]+2 && b[1]<=r[3]+2) {
+            r=[Math.min(r[0],b[0]),Math.min(r[1],b[1]),Math.max(r[2],b[2]),Math.max(r[3],b[3])];
+            rects[i]=r; rects.splice(j,1); j=i;
+          }
+        }
+        drawPatch(r);
+      }
+    }
+    previousRects = rex ? spriteRects() : [];
     if (screen.flip) screen.flip();
     if (!countFrame) return;
     fpsFrames++;
@@ -205,6 +244,8 @@ IMG.cacti.forEach(i=>i.transparent=0);
     displayedHighScore = highScore;
     Bangle.setLCDPower(true);
     resetFPS();
+    forceFull=true; previousRects=[];
+    lastStep=getTime()-interval/1000;
     loop();
   }
   function gameStop() {
@@ -216,7 +257,7 @@ IMG.cacti.forEach(i=>i.transparent=0);
       saveTimer = setTimeout(commitScore,200);
     }
   }
-  function onFrame() {
+  function onFrame(render) {
     "ram"
     g.clear();
     if (rex.alive) {
@@ -251,7 +292,7 @@ IMG.cacti.forEach(i=>i.transparent=0);
       g.getPixel(rexx+15,rexy+11) || g.getPixel(rexx+17,rexy+7) ||
       g.getPixel(rexx+19,rexy+5) || g.getPixel(rexx+19,rexy+1))) gameStop();
     g.drawImage(IMG.rex[rex.img],rexx,rexy);
-    var groundOffset=frame&127;
+    var groundOffset=0; // Static ground avoids a full-width transfer every frame.
     g.drawImage(IMG.ground,-groundOffset,61);
     g.drawImage(IMG.ground,128-groundOffset,61);
     var hi="HI "+displayedHighScore, score=""+rex.score;
@@ -264,13 +305,15 @@ IMG.cacti.forEach(i=>i.transparent=0);
       msg=rex.score>displayedHighScore?"NEW RECORD":"Tap to retry";
       g.drawString(msg,(W-g.stringWidth(msg))/2,25);
     }
-    present(true);
+    if (render !== false || !rex.alive) present(true);
   }
   function loop() {
     timer = undefined;
     if (closed || paused || !rex || !rex.alive) return;
     var started = getTime();
-    onFrame();
+    var steps=Math.min(5,Math.max(1,Math.floor((started-lastStep)*1000/interval)));
+    lastStep+=steps*interval/1000;
+    for (var n=0;n<steps && rex.alive;n++) onFrame(n===steps-1);
     if (rex.alive && !paused && !closed) {
       timer = setTimeout(loop,Math.max(1,interval-(getTime()-started)*1000));
     }
@@ -294,7 +337,7 @@ IMG.cacti.forEach(i=>i.transparent=0);
     paused = !on;
     stopLoop();
     if (!on || closed) return;
-    paintChrome(); resetFPS();
+    paintChrome(); resetFPS(); lastStep=getTime();
     if (rex) {
       onFrame();
       if (rex.alive) timer=setTimeout(loop,interval);
