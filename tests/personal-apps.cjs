@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const cp = require('node:child_process');
 const vm = require('node:vm');
 require("./p8-colors.cjs");
+require("./p8-dino.cjs");
 const catalog = JSON.parse(fs.readFileSync('apps.json', 'utf8'));
 const upstream = JSON.parse(cp.execFileSync('git', ['show', 'd8dff30062ebdb14a727d5340129a68471f069eb:apps.json'], {encoding:'utf8'}));
 const removed = ['main-sn80','main-beb79','main-gw32','main-g5','multiclock-sn80','multiclock-g5'];

@@ -504,5 +504,40 @@
         "evaluate": true
       }
     ]
+  },
+  {
+    "id": "dinorun",
+    "name": "Dino Runner",
+    "shortName": "Dino",
+    "version": "0.01",
+    "description": "Jump over cacti in this P8 touch port of BangleApps T-Rex, with live measured FPS and a saved best score.",
+    "icon": "dinorun.png",
+    "type": "app",
+    "tags": "game",
+    "supports": [
+      "P8"
+    ],
+    "readme": "README.md",
+    "storage": [
+      {
+        "name": "dinorun.app.js",
+        "url": "app.js"
+      },
+      {
+        "name": "dinorun.img",
+        "url": "app-icon.js",
+        "evaluate": true
+      },
+      {
+        "name": "dinorun.license",
+        "url": "LICENSE"
+      }
+    ],
+    "data": [
+      {
+        "name": "dinorun.score",
+        "storageFile": true
+      }
+    ]
   }
 ]
