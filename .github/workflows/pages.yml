@@ -28,10 +28,7 @@ jobs:
         run: node tests/personal-apps.cjs
       - uses: actions/configure-pages@v5
       - name: Prepare static site
-        run: |
-          mkdir _site
-          cp -R index.html loader.js css img apps apps.json apps-p8.json core browserconfig.xml site.webmanifest _site/
-          touch _site/.nojekyll
+        run: node scripts/build-site.cjs
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site

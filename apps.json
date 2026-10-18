@@ -1,158 +1,105 @@
 [
-    { "id": "boot",
-    "name": "boot",
+  {
+    "id": "boot",
+    "name": "Boot",
     "tags": "tool,system",
-    "type":"bootloader",
+    "type": "bootloader",
     "icon": "bootloader.png",
-    "version":"0.01",
-    "supports": ["ROCK","P8","Magic3","BEBINCA79","SN80","G5","GW32"],
-    "description": "THIS MUST BE LOADED FIRST -TWICE. The first time it will fail with the error `...ReferenceError p is not defined`. It should load completely the second time",
-    "storage": [
-      {"name":".boot0","url":"boot0.js","supports": ["ROCK","P8","Magic3"]},
-      {"name":".boot0","url":"boot0-sn80.js","supports": ["SN80"]},
-      {"name":".boot0","url":"boot0-beb79.js","supports": ["BEBINCA79"]},
-      {"name":".boot0","url":"boot0-gw32.js","supports": ["GW32"]},
-      {"name":".boot0","url":"boot0-g5.js","supports": ["G5"]},
-      {"name":".bootcde","url":"bootloader.js"}
+    "version": "0.01",
+    "supports": [
+      "P8"
     ],
-    "sortorder" : -15
+    "description": "P8 startup environment. Install twice during initial setup if the first installation reports that p is not defined.",
+    "storage": [
+      {
+        "name": ".boot0",
+        "url": "boot0.js"
+      },
+      {
+        "name": ".bootcde",
+        "url": "bootloader.js"
+      }
+    ],
+    "sortorder": -15
   },
-  { "id": "main",
+  {
+    "id": "main",
     "name": "Main",
     "tags": "tool,system",
-    "type":"bootloader",
+    "type": "bootloader",
     "icon": "bootloader.png",
-    "version":"0.05",
-    "supports": ["ROCK","ROCKBUF","P8","Magic3"],
-    "description": "This loads the Bangle App execution emulation environment, drivers etc",
-    "storage": [
-      {"name":"lcd.js","url":"lcd.js", "supports": ["P8","Magic3"]},
-      {"name":"lcd.js","url":"lcd.js", "supports": ["ROCK"]},
-      {"name":"lcd-p8.js","url":"lcd-p8.js"},
-      {"name":"main.js","url":"main.js"},
-      {"name":"accel.js","url":"accel.js"},
-      {"name":"accel_step.js","url":"accel_step.js"},
-      {"name":"cst816s.js","url":"cst816s.js"},
-      {"name":"cst716.js","url":"cst716.js"},
-      {"name":"cst716-p8.js","url":"cst716-p8.js"},
-      {"name":"setui.js","url":"setui.min.js"},
-      {"name":"menu.js","url":"menu.min.js"},
-      {"name":"prompt.js","url":"prompt.min.js"},
-      {"name":"locale","url":"locale.js"},
-      {"name":"widgets.js","url":"widgets.js"},
-      {"name":"gps.js","url":"gps.js"}
+    "version": "0.05",
+    "supports": [
+      "P8"
     ],
-    "sortorder" : -10
-  },
-  { "id": "main-sn80",
-    "name": "Main SN80",
-    "tags": "tool,system",
-    "type":"bootloader",
-    "icon": "bootloader.png",
-    "version":"0.04",
-    "supports": ["SN80"],
-    "description": "This loads the Bangle App execution emulation environment, drivers etc",
+    "description": "P8 display, touchscreen, accelerometer and app environment.",
     "storage": [
-      {"name":"lcd-sn80.js","url":"lcd-sn80.js"},
-      {"name":"main-sn80.js","url":"main-sn80.js"},
-      {"name":"accel.js","url":"accel.js"},
-      {"name":"accel_step.js","url":"accel_step.js"},
-      {"name":"cst716-sn80.js","url":"cst716-sn80.js"},
-      {"name":"setui-sn80.js","url":"setui-sn80.js"},
-      {"name":"menu-sn80.js","url":"menu-sn80.js"},
-      {"name":"prompt-sn80.js","url":"prompt-sn80.js"},
-      {"name":"locale","url":"locale.js"},
-      {"name":"widgets-sn80.js","url":"widgets-sn80.js"},
-      {"name":"gps.js","url":"gps.js"}
+      {
+        "name": "lcd-p8.js",
+        "url": "lcd-p8.js"
+      },
+      {
+        "name": "main.js",
+        "url": "main.js"
+      },
+      {
+        "name": "accel.js",
+        "url": "accel.js"
+      },
+      {
+        "name": "accel_step.js",
+        "url": "accel_step.js"
+      },
+      {
+        "name": "cst716-p8.js",
+        "url": "cst716-p8.js"
+      },
+      {
+        "name": "setui.js",
+        "url": "setui.min.js"
+      },
+      {
+        "name": "menu.js",
+        "url": "menu.min.js"
+      },
+      {
+        "name": "prompt.js",
+        "url": "prompt.min.js"
+      },
+      {
+        "name": "locale",
+        "url": "locale.js"
+      },
+      {
+        "name": "widgets.js",
+        "url": "widgets.js"
+      },
+      {
+        "name": "gps.js",
+        "url": "gps.js"
+      }
     ],
-    "sortorder" : -10
+    "sortorder": -10
   },
-  { "id": "main-beb79",
-    "name": "Main Bebinca-79",
-    "tags": "tool,system",
-    "type":"bootloader",
-    "icon": "bootloader.png",
-    "version":"0.04",
-    "supports": ["BEBINCA79"],
-    "description": "This loads the Bangle App execution emulation environment, drivers etc",
-    "storage": [
-      {"name":"lcd-beb79.js","url":"lcd-beb79.js"},
-      {"name":"main-beb79.js","url":"main-beb79.js"},
-      {"name":"accel_bma421.js","url":"accel_bma421.js"},
-      {"name":"config_bma421.js","url":"config_bma421.js"},
-      {"name":"cst816s.js","url":"cst816s.js"},
-      {"name":"setui-beb79.js","url":"setui-beb79.js"},
-      {"name":"menu-beb79.js","url":"menu-beb79.js"},
-      {"name":"prompt-beb79.js","url":"prompt-beb79.js"},
-      {"name":"locale","url":"locale.js"},
-      {"name":"widgets-beb79.js","url":"widgets-beb79.js"},
-      {"name":"gps.js","url":"gps.js"}
-    ],
-    "sortorder" : -10
-  },
-  { "id": "main-gw32",
-    "name": "Main GW32",
-    "tags": "tool,system",
-    "type":"bootloader",
-    "icon": "bootloader.png",
-    "version":"0.05",
-    "supports": ["GW32"],
-    "description": "This loads the Bangle App execution emulation environment, drivers etc",
-    "storage": [
-      {"name":"lcd-gw32.js","url":"lcd-gw32.js"},
-      {"name":"main-gw32.js","url":"main-gw32.js"},
-      {"name":"it7259.js","url":"it7259.js"},
-      {"name":"accel-gw32.js","url":"accel-gw32.js"},
-      {"name":"accel_step_gw32.js","url":"accel_step_gw32.js"},
-      {"name":"setui-gw32.js","url":"setui-gw32.js"},
-      {"name":"menu-gw32.js","url":"menu-gw32.js"},
-      {"name":"prompt-gw32.js","url":"prompt-gw32.js"},
-      {"name":"locale","url":"locale.js"},
-      {"name":"widgets-gw32.js","url":"widgets-gw32.js"},
-      {"name":"gps.js","url":"gps.js"}
-    ],
-    "sortorder" : -10
-  },
-  { "id": "main-g5",
-    "name": "Main G5",
-    "tags": "tool,system",
-    "type":"bootloader",
-    "icon": "bootloader.png",
-    "version":"0.04",
-    "supports": ["G5"],
-    "description": "This loads the Bangle App execution emulation environment, drivers etc",
-    "storage": [
-      {"name":"lcd-g5buff.js","url":"lcd-g5buff.js"},
-      {"name":"main-g5.js","url":"main-g5.js"},
-      {"name":"accel-g5.js","url":"accel-g5.js"},
-      {"name":"cst816s-g5.js","url":"cst816s-g5.js"},
-      {"name":"setui-g5.js","url":"setui-g5.js"},
-      {"name":"menu-g5.js","url":"menu-g5.js"},
-      {"name":"prompt-g5.js","url":"prompt-g5.js"},
-      {"name":"locale","url":"locale.js"},
-      {"name":"widgets-g5.js","url":"widgets-g5.js"},
-      {"name":"gps.js","url":"gps.js"}
-    ],
-    "sortorder" : -10
-  },
-
-  { "id": "launch",
+  {
+    "id": "launch",
     "name": "Launcher (Default)",
-    "shortName":"Launcher",
+    "shortName": "Launcher",
     "icon": "launch.png",
-    "version":"0.04",
-    "supports": ["ROCK","P8","Magic3","BEBINCA79","SN80","G5"],
+    "version": "0.04",
+    "supports": [
+      "P8"
+    ],
     "description": "App launcher with widgets. Clears leftover startup text before drawing.",
     "tags": "tool,system,launcher",
-    "type":"launch",
+    "type": "launch",
     "storage": [
-      {"name":"launch.js","url":"launch.js","supports": ["ROCK","P8","Magic3"]},
-      {"name":"launch-sn80.js","url":"launch-sn80.js","supports": ["SN80"]},
-      {"name":"launch-beb79.js","url":"launch-beb79.js","supports": ["BEBINCA79"]},
-      {"name":"launch-gw32.js","url":"launch-gw32.js","supports": ["GW32"]},
-      {"name":"launch-g5.js","url":"launch-g5.js","supports": ["G5"]}
+      {
+        "name": "launch.js",
+        "url": "launch.js"
+      }
     ],
-    "sortorder" : -10
+    "sortorder": -10
   },
   {
     "id": "files",
@@ -162,248 +109,372 @@
     "icon": "files.png",
     "tags": "tool,system,files",
     "storage": [
-      {"name":"files.app.js","url":"files.js"},
-      {"name":"files.img","url":"files-icon.js","evaluate":true}
+      {
+        "name": "files.app.js",
+        "url": "files.js"
+      },
+      {
+        "name": "files.img",
+        "url": "files-icon.js",
+        "evaluate": true
+      }
+    ],
+    "supports": [
+      "P8"
     ]
   },
   {
     "id": "multiclock",
     "name": "Multi Clock",
     "version": "0.08",
-    "description": "Clock with multiple faces.  Switch between faces with BTN1 & BTN3 or swipe left-right. For best display set theme Background 2 to cyan or some other bright colour in settings.",
+    "description": "P8 clock with multiple faces. Swipe left or right to switch faces; press the side button to open the launcher.",
     "icon": "multiclock.png",
     "type": "clock",
     "tags": "clock",
-    "supports": ["BANGLEJS","BANGLEJS2","ROCK"],
-    "readme": "README.md",
-    "allow_emulator": true,
-    "storage": [
-      {"name":"multiclock.app.js","url":"multiclock.app.js"},
-      {"name":"big.face.js","url":"big.face.js"},
-      {"name":"ana.face.js","url":"ana.face.js"},
-      {"name":"digi.face.js","url":"digi.face.js"},
-      {"name":"txt.face.js","url":"txt.face.js"},
-      {"name":"dk.face.js","url":"dk.face.js"},
-      {"name":"nifty.face.js","url":"nifty.face.js"},
-      {"name":"braun1.face.js","url":"braun1.face.js"},
-      {"name":"multiclock.img","url":"multiclock-icon.js","evaluate":true}
+    "supports": [
+      "P8"
     ],
-    "sortorder" : -10
+    "readme": "README.md",
+    "allow_emulator": false,
+    "storage": [
+      {
+        "name": "multiclock.app.js",
+        "url": "multiclock.app.js"
+      },
+      {
+        "name": "big.face.js",
+        "url": "big.face.js"
+      },
+      {
+        "name": "ana.face.js",
+        "url": "ana.face.js"
+      },
+      {
+        "name": "digi.face.js",
+        "url": "digi.face.js"
+      },
+      {
+        "name": "txt.face.js",
+        "url": "txt.face.js"
+      },
+      {
+        "name": "dk.face.js",
+        "url": "dk.face.js"
+      },
+      {
+        "name": "nifty.face.js",
+        "url": "nifty.face.js"
+      },
+      {
+        "name": "braun1.face.js",
+        "url": "braun1.face.js"
+      },
+      {
+        "name": "multiclock.img",
+        "url": "multiclock-icon.js",
+        "evaluate": true
+      }
+    ],
+    "sortorder": -10
   },
   {
-    "id": "multiclock-sn80",
-    "name": "Multi Clock for SN80, BEBINCA79 and GW32",
-    "version": "0.09",
-    "description": "Clock with multiple faces.  Switch between faces with  swipe left-right. For best display set theme Background 2 to cyan or some other bright colour in settings.",
-    "icon": "multiclock.png",
-    "type": "clock",
-    "tags": "clock",
-    "supports": ["BANGLEJS","BANGLEJS2","ROCK"],
-    "readme": "README.md",
-    "allow_emulator": true,
-    "storage": [
-      {"name":"multiclock-sn80.app.js","url":"multiclock.app.js"},
-      {"name":"big.face.js","url":"big.face.js"},
-      {"name":"ana.face.js","url":"ana.face.js"},
-      {"name":"digi.face.js","url":"digi.face.js"},
-      {"name":"txt.face.js","url":"txt.face.js"},
-      {"name":"dk.face.js","url":"dk.face.js"},
-      {"name":"nifty.face.js","url":"nifty.face.js"},
-      {"name":"dot.face.js","url":"dot.face.js"},
-      {"name":"bold.face.js","url":"bold.face.js"},
-      {"name":"numdial.face.js","url":"numdial.face.js"},
-      {"name":"steps.face.js","url":"steps.face.js"},
-      {"name":"Roboto","url":"Roboto.js"},
-      {"name":"RobotoSmall","url":"RobotoSmall.js"},
-      {"name":"multiclock-sn80.img","url":"multiclock-icon.js","evaluate":true}
-    ],
-    "sortorder" : -10
-  },
-  {
-    "id": "multiclock-g5",
-    "name": "Multi Clock for G5",
-    "version": "0.07",
-    "description": "Clock with multiple faces.  Switch between faces with  swipe left-right. For best display set theme Background 2 to cyan or some other bright colour in settings.",
-    "icon": "multiclock.png",
-    "type": "clock",
-    "tags": "clock",
-    "supports": ["G5"],
-    "readme": "README.md",
-    "allow_emulator": true,
-    "storage": [
-      {"name":"multiclock-g5.app.js","url":"multiclock-g5.app.js"},
-      {"name":"big.face.js","url":"big.face.js"},
-      {"name":"txt.face.js","url":"txt.face.js"},
-      {"name":"dk.face.js","url":"dk.face.js"},
-      {"name":"nifty.face.js","url":"nifty.face.js"},
-      {"name":"bold.face.js","url":"bold.face.js"},
-      {"name":"numdial.face.js","url":"numdial.face.js"},
-      {"name":"Roboto","url":"Roboto.js"},
-      {"name":"RobotoSmall","url":"RobotoSmall.js"},
-      {"name":"multiclock-g5.img","url":"multiclock-icon.js","evaluate":true}
-    ],
-    "sortorder" : -10
-  },
-
-  { "id": "alarm",
+    "id": "alarm",
     "name": "Default Alarm",
-    "shortName":"Alarms",
+    "shortName": "Alarms",
     "icon": "app.png",
-    "version":"0.101",
+    "version": "0.101",
     "description": "Set and respond to alarms",
     "tags": "tool,alarm,widget",
     "storage": [
-      {"name":"alarm.app.js","url":"app.js"},
-      {"name":"alarm.boot.js","url":"boot.js"},
-      {"name":"alarm.js","url":"alarm.js"},
-      {"name":"alarm.img","url":"app-icon.js","evaluate":true},
-      {"name":"alarm.wid.js","url":"widget.js"}
+      {
+        "name": "alarm.app.js",
+        "url": "app.js"
+      },
+      {
+        "name": "alarm.boot.js",
+        "url": "boot.js"
+      },
+      {
+        "name": "alarm.js",
+        "url": "alarm.js"
+      },
+      {
+        "name": "alarm.img",
+        "url": "app-icon.js",
+        "evaluate": true
+      },
+      {
+        "name": "alarm.wid.js",
+        "url": "widget.js"
+      }
     ],
     "data": [
-      {"name":"alarm.json"}
+      {
+        "name": "alarm.json"
+      }
+    ],
+    "supports": [
+      "P8"
     ]
   },
-  { "id": "widbat",
+  {
+    "id": "widbat",
     "name": "Battery Level Widget",
     "icon": "widget.png",
-    "version":"0.06",
+    "version": "0.06",
     "description": "Show the current battery level and charging status in the top right of the clock",
     "tags": "widget,battery",
-    "type":"widget",
+    "type": "widget",
     "storage": [
-      {"name":"widbat.wid.js","url":"widget.js"}
+      {
+        "name": "widbat.wid.js",
+        "url": "widget.js"
+      }
+    ],
+    "supports": [
+      "P8"
     ]
   },
-  { "id": "widancs",
+  {
+    "id": "widancs",
     "name": "Apple Notification Widget",
-    "shortName":"ANCS Widget",
+    "shortName": "ANCS Widget",
     "icon": "widget.png",
-    "version":"0.08",
+    "version": "0.08",
     "description": "Displays calls and messages from a paired iPhone. Read README before installation as it only works with compatible apps",
     "readme": "README.md",
     "tags": "widget",
     "type": "widget",
     "storage": [
-      {"name":"widancs.wid.js","url":"ancs.js"},
-      {"name":"widancs.settings.js","url":"settings.js"}
+      {
+        "name": "widancs.wid.js",
+        "url": "ancs.js"
+      },
+      {
+        "name": "widancs.settings.js",
+        "url": "settings.js"
+      }
+    ],
+    "supports": [
+      "P8"
     ]
   },
-  { "id": "setting",
+  {
+    "id": "setting",
     "name": "Setting",
     "icon": "setting.png",
-    "version":"0.04",
+    "version": "0.04",
     "description": "A menu for adjusting device settings",
     "tags": "tool,system",
     "storage": [
-      {"name":"setting.app.js","url":"setting.app.js"},
-      {"name":"bletime.js","url":"bletime.js"},
-      {"name":"setting.img","url":"setting-icon.js","evaluate":true }
+      {
+        "name": "setting.app.js",
+        "url": "setting.app.js"
+      },
+      {
+        "name": "bletime.js",
+        "url": "bletime.js"
+      },
+      {
+        "name": "setting.img",
+        "url": "setting-icon.js",
+        "evaluate": true
+      }
     ],
-    "sortorder" : -2
+    "sortorder": -2,
+    "supports": [
+      "P8"
+    ]
   },
-  { "id": "widmp",
+  {
+    "id": "widmp",
     "name": "Moon Phase Widget",
     "icon": "widget.png",
-    "version":"0.04",
+    "version": "0.04",
     "description": "Display the current moon phase in blueish for the northern hemisphere in eight phases",
     "tags": "widget,tools",
-    "type":"widget",
+    "type": "widget",
     "storage": [
-      {"name":"widmp.wid.js","url":"widget.js"}
+      {
+        "name": "widmp.wid.js",
+        "url": "widget.js"
+      }
+    ],
+    "supports": [
+      "P8"
     ]
   },
-  { "id": "calc",
+  {
+    "id": "calc",
     "name": "Calc",
     "icon": "calc.png",
-    "version":"0.01",
+    "version": "0.01",
     "description": "Simple Calculator",
     "tags": "tool",
-    "allow_emulator":false,
+    "allow_emulator": false,
     "storage": [
-      {"name":"calc.app.js","url":"calc.js"},
-      {"name":"calc.img","url":"calc-icon.js","evaluate":true }
+      {
+        "name": "calc.app.js",
+        "url": "calc.js"
+      },
+      {
+        "name": "calc.img",
+        "url": "calc-icon.js",
+        "evaluate": true
+      }
+    ],
+    "supports": [
+      "P8"
     ]
   },
-  { "id": "life",
+  {
+    "id": "life",
     "name": "Life",
     "icon": "life.png",
-    "version":"0.07",
-    "supports": ["ROCK","P8","Magic3","BEBINCA79","SN80","G5"],
+    "version": "0.07",
+    "supports": [
+      "P8"
+    ],
     "description": "Conway's Game of Life cellular automata",
     "tags": "game",
-    "allow_emulator":true,
+    "allow_emulator": false,
     "storage": [
-      {"name":"life.app.js","url":"life.app.js","supports": ["ROCK","P8","Magic3","BEBINCA79","SN80"]},
-      {"name":"life.app.js","url":"life-g5.app.js","supports": ["G5"]},
-      {"name":"life.img","url":"life-icon.js","evaluate":true }
+      {
+        "name": "life.app.js",
+        "url": "life.app.js"
+      },
+      {
+        "name": "life.img",
+        "url": "life-icon.js",
+        "evaluate": true
+      }
     ]
   },
-  { "id": "blackjack",
+  {
+    "id": "blackjack",
     "name": "21",
-    "shortName":"21",
+    "shortName": "21",
     "icon": "blackjack.png",
-    "version":"0.02",
+    "version": "0.02",
     "description": "Simple implementation of card game Black Jack",
     "tags": "game",
-    "allow_emulator":false,
+    "allow_emulator": false,
     "storage": [
-      {"name":"blackjack.app.js","url":"blackjack.app.js"},
-      {"name":"hearts.js","url":"hearts.js"},
-      {"name":"spades.js","url":"spades.js"},
-      {"name":"clubs.js","url":"clubs.js"},
-      {"name":"diamonds.js","url":"diamonds.js"},
-      {"name":"blackjack.img","url":"blackjack-icon.js","evaluate":true}
+      {
+        "name": "blackjack.app.js",
+        "url": "blackjack.app.js"
+      },
+      {
+        "name": "hearts.js",
+        "url": "hearts.js"
+      },
+      {
+        "name": "spades.js",
+        "url": "spades.js"
+      },
+      {
+        "name": "clubs.js",
+        "url": "clubs.js"
+      },
+      {
+        "name": "diamonds.js",
+        "url": "diamonds.js"
+      },
+      {
+        "name": "blackjack.img",
+        "url": "blackjack-icon.js",
+        "evaluate": true
+      }
     ],
-    "sortorder" : 10
+    "sortorder": 10,
+    "supports": [
+      "P8"
+    ]
   },
-  { "id": "pairs",
+  {
+    "id": "pairs",
     "name": "Pairs",
-    "shortName":"Pairs",
+    "shortName": "Pairs",
     "icon": "pairs.png",
-    "version":"0.01",
+    "version": "0.01",
     "description": "Pairs matching card game",
     "tags": "game",
-    "allow_emulator":false,
+    "allow_emulator": false,
     "storage": [
-      {"name":"pairs.app.js","url":"pairs.app.js"},
-      {"name":"pairs.img","url":"pairs_icon.js","evaluate":true}
+      {
+        "name": "pairs.app.js",
+        "url": "pairs.app.js"
+      },
+      {
+        "name": "pairs.img",
+        "url": "pairs_icon.js",
+        "evaluate": true
+      }
     ],
-    "sortorder" : 10
+    "sortorder": 10,
+    "supports": [
+      "P8"
+    ]
   },
-  { "id": "heart",
+  {
+    "id": "heart",
     "name": "Heart",
     "icon": "heartrate.png",
-    "version":"0.06",
+    "version": "0.06",
     "description": "Measure your current heart rate - P8 ONLY!!",
     "readme": "README.md",
     "tags": "health",
     "storage": [
-      {"name":"heart.app.js","url":"heart.min.js"},
-      {"name":"heart.img","url":"heartrate-icon.js","evaluate":true}
+      {
+        "name": "heart.app.js",
+        "url": "heart.min.js"
+      },
+      {
+        "name": "heart.img",
+        "url": "heartrate-icon.js",
+        "evaluate": true
+      }
+    ],
+    "supports": [
+      "P8"
     ]
   },
-  { "id": "widviz",
+  {
+    "id": "widviz",
     "name": "Widget Visibility Widget",
-    "shortName":"Viz Widget",
+    "shortName": "Viz Widget",
     "icon": "eye.png",
-    "version":"0.02",
+    "version": "0.02",
     "description": "Touch top left to hide top bar widgets, again to redisplay.",
     "tags": "widget",
     "type": "widget",
     "storage": [
-      {"name":"widviz.wid.js","url":"widviz.wid.js"}
+      {
+        "name": "widviz.wid.js",
+        "url": "widviz.wid.js"
+      }
+    ],
+    "supports": [
+      "P8"
     ]
   },
-  { "id": "widstep",
+  {
+    "id": "widstep",
     "name": "Simple Step widget",
-    "shortName":"Step Widget",
+    "shortName": "Step Widget",
     "icon": "widget.png",
-    "version":"0.01",
+    "version": "0.01",
     "description": "Only updates step count when LCD turns on.",
     "tags": "widget",
     "type": "widget",
     "storage": [
-      {"name":"widstep.wid.js","url":"widstep.wid.js"}
+      {
+        "name": "widstep.wid.js",
+        "url": "widstep.wid.js"
+      }
+    ],
+    "supports": [
+      "P8"
     ]
   },
   {

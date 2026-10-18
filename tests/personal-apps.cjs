@@ -4,16 +4,35 @@ const cp = require('node:child_process');
 const vm = require('node:vm');
 const catalog = JSON.parse(fs.readFileSync('apps.json', 'utf8'));
 const upstream = JSON.parse(cp.execFileSync('git', ['show', 'd8dff30062ebdb14a727d5340129a68471f069eb:apps.json'], {encoding:'utf8'}));
+const removed = ['main-sn80','main-beb79','main-gw32','main-g5','multiclock-sn80','multiclock-g5'];
 for (const app of upstream) {
   const current = catalog.find(a => a.id === app.id);
-  assert(current, `Missing original app: ${app.id}`);
-  if (app.id !== 'launch') assert.deepEqual(current, app);
-  else {
-    assert.deepEqual(current.storage, app.storage);
-    assert.deepEqual(current.supports, app.supports);
-    assert.notEqual(current.version, app.version);
+  if (removed.includes(app.id)) {assert.equal(current, undefined); continue;}
+  assert(current, `Missing P8/shared app: ${app.id}`);
+  const expectedFiles = app.storage.filter(f => !f.supports || f.supports.includes('P8'))
+    .filter(f => app.id !== 'main' || !['lcd.js','cst816s.js','cst716.js'].includes(f.name))
+    .map(({supports,...file})=>file);
+  assert.deepEqual(current.storage, expectedFiles, `P8 install files changed: ${app.id}`);
+}
+for (const app of catalog) {
+  assert.deepEqual(app.supports, ['P8']);
+  const names = new Set();
+  for (const file of app.storage) {
+    assert(!names.has(file.name), `Duplicate install target in ${app.id}: ${file.name}`);
+    names.add(file.name);
+    assert(!file.supports, 'Install files must already be selected for P8');
+    if (file.url) assert(fs.existsSync(`apps/${app.id}/${file.url}`), `Missing file: ${file.url}`);
   }
 }
+const loaderContext = {Puck:{},Const:{},DEVICEINFO:[],document:{getElementById:()=>({})},appJSON:[...catalog,{id:'other',supports:['G5']}]};
+vm.createContext(loaderContext);
+vm.runInContext(fs.readFileSync('loader.js','utf8'),loaderContext);
+loaderContext.onAppJSONLoaded();
+assert.equal(loaderContext.appJSON.length,catalog.length);
+assert.equal(loaderContext.DEVICEINFO.length,1);
+assert.equal(loaderContext.DEVICEINFO[0].id,'P8');
+loaderContext.onFoundDeviceInfo('P8');
+assert.throws(()=>loaderContext.onFoundDeviceInfo('G5'),/P8 watches only/);
 assert.equal(new Set(catalog.map(a => a.id)).size, catalog.length);
 const hello = catalog.find(a => a.id === 'hello');
 assert.deepEqual(hello.supports, ['P8']);
@@ -67,4 +86,4 @@ assert(events.indexOf('loadWidgets') < events.indexOf('drawWidgets'));
 assert(events.indexOf('drawWidgets') < events.indexOf('clearRect'));
 assert(fs.existsSync('core/js/index.js'));
 assert(fs.existsSync('core/lib/espruinotools.js'));
-console.log(`Passed: all ${upstream.length} original apps preserved; Hello World drawing, touch, icon, side-button exit; launcher clear order; loader core present.`);
+console.log(`Passed: ${catalog.length} P8/shared apps selected; non-P8 packages excluded; Hello World drawing, touch, icon, side-button exit; launcher clear order; loader core present.`);
