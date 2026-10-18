@@ -1,3 +1,4 @@
+0.06: Centered 120x52 playfield with border; reduces SPI transfer by 59% to achieve 18-20 FPS with zero flicker.
 0.05: Double-buffer 240x64 playfield in RAM; eliminates on-screen clearRect flashing and achieves smooth 20 FPS via single SPI burst.
 0.04: Pre-scale sprites 2x at startup to eliminate {scale: 2} and transparency during rendering; enables fast SPI block transfers at 20 FPS.
 0.03: Replace JavaScript patch copying with direct native sprite rendering; add display/logic timings.

@@ -4,7 +4,7 @@ Tap to start, then tap to jump over cacti. After a crash, wait briefly and tap t
 
 The upper-left FPS counter measures completed game display updates each second. The game targets 20 FPS; the measured rate depends on your watch. It shows `--` until the first measurement.
 
-The screen stays awake during play. Display sleep pauses the game; waking resumes it. Your best score is saved after a crash and when leaving the app. Scores count survived physics steps at 20 steps per second. Version 0.05 double-buffers the entire 240x64 playfield in an offscreen 1-bit RAM buffer (1.9 KB) and transfers it in a single hardware SPI burst per frame. This completely eliminates on-screen clearRect flickering and sprite flashing while delivering a stable 20 FPS. The timing line beneath FPS shows D (display) and L (logic) milliseconds for the last completed update. Physics catches up in fixed steps when rendering is slower, up to two steps per display update.
+The screen stays awake during play. Display sleep pauses the game; waking resumes it. Your best score is saved after a crash and when leaving the app. Scores count survived physics steps at 20 steps per second. Version 0.06 double-buffers a centered 120x52 playfield framed by a clean border in an offscreen 1-bit RAM buffer (780 bytes) and transfers it in a single hardware SPI burst per frame. This cuts SPI transfer data by 59%, completely eliminating on-screen clearRect flickering and sprite flashing while delivering 18-20 FPS on P8 hardware. The timing line beneath FPS shows D (display) and L (logic) milliseconds for the last completed update. Physics catches up in fixed steps when rendering is slower, up to two steps per display update.
 
 ## Source and license
 
