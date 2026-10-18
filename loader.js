@@ -1,5 +1,31 @@
 /* P8-only configuration for the shared Espruino App Loader. */
 Puck.debug = 3;
+// Increase initial response timeout from 300ms to 1500ms so slower initial BLE handshakes don't fail prematurely.
+Puck.timeoutNormal = 1500;
+
+// Improve Web Bluetooth discovery for P8 smartwatches
+if (typeof navigator !== "undefined" && navigator.bluetooth && navigator.bluetooth.requestDevice) {
+  var origRequestDevice = navigator.bluetooth.requestDevice.bind(navigator.bluetooth);
+  navigator.bluetooth.requestDevice = function (options) {
+    if (options && options.filters) {
+      // Add P8 / smartwatch name prefixes so Chrome discovers the watch immediately from its name
+      var extraFilters = [
+        { namePrefix: "P8" },
+        { namePrefix: "p8" },
+        { namePrefix: "Rock" },
+        { namePrefix: "rock" },
+        { namePrefix: "Magic" },
+        { namePrefix: "magic" },
+        { namePrefix: "MOY" },
+        { namePrefix: "moy" },
+        { namePrefix: "SN80" },
+        { namePrefix: "DF" }
+      ];
+      options.filters = options.filters.concat(extraFilters);
+    }
+    return origRequestDevice(options);
+  };
+}
 // Keep the page, device configuration and catalog on the same published revision.
 var p8HttpGet = httpGet;
 httpGet = function (url) {

@@ -11,3 +11,17 @@ Comms.setTime = function () {
     return Comms.write(command);
   });
 };
+
+// Add connection helper to remind user to keep the screen on for discovery
+if (typeof window !== "undefined") {
+  window.addEventListener("DOMContentLoaded", function () {
+    var btn = document.getElementById("connectmydevice");
+    if (btn) {
+      btn.addEventListener("click", function () {
+        if (!btn.classList.contains("is-connected") && typeof showToast === "function") {
+          showToast("Ensure your watch screen is awake and lit up", "info", 3500);
+        }
+      }, true);
+    }
+  });
+}
